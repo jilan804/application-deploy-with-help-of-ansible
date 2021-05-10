@@ -1,0 +1,32 @@
+---
+ - name: Install the java 
+   hosts: apache                                             
+   gather_facts: true      
+   tasks:                             
+    - name: Update repo           
+      yum:             
+        name: "*"            
+        state: latest            
+    - name: Installing OpenJDK           
+      yum:                                 
+        name: java-1.8.0-openjdk 
+    - name: Download tomcat 
+      get_url:
+        url: https://downloads.apache.org/tomcat/tomcat-8/v8.5.65/bin/apache-tomcat-8.5.65.tar.gz
+        dest: /root
+    - name: Extracting tomcat
+      unarchive:
+        src: /root/apache-tomcat-8.5.65.tar.gz
+        dest: /root
+        remote_src: yes
+    - name: deploy the shoppingcard application
+      get_url:
+        url: https://www.oracle.com/webfolder/technetwork/tutorials/obe/fmw/wls/10g/r3/cluster/session_state/files/shoppingcart.zip
+        dest: /root
+    - name: extracting shoppingcard file
+      unarchive:
+        src: /root/shoppingcart.zip  
+        dest: /root/apache-tomcat-8.5.65/webapps
+        remote_src: yes
+    - name: Starting tomcat
+      shell: nohup /root/apache-tomcat-8.5.65/bin/startup.sh
